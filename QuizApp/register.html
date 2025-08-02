@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+   
+
+    <!-- Webpage Title -->
+    <title>Registration Page</title>
+
+    <!-- Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/fontawesome-all.min.css" rel="stylesheet">
+    <link href="./css/aos.min.css" rel="stylesheet">
+    <link href="./css/swiper.css" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="./assets/images/favicon.png">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="navbar navbar-expand-lg fixed-top navbar-dark" aria-label="Main navigation">
+        <div class="container">
+
+            <!-- Image Logo -->
+            <!-- <a class="navbar-brand logo-image" href="index.html"><img src="images/logo.svg" alt="alternative"></a> -->
+
+            <!-- Text Logo - Use this if you don't have a graphic logo -->
+            <a class="navbar-brand logo-text" href="index.html">QuizBee</a>
+
+            <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            
+        </div> <!-- end of container -->
+    </nav> <!-- end of navbar -->
+    <!-- end of navigation -->
+
+
+    <!-- Header -->
+    <header class="ex-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-10 offset-xl-1">
+                    <h1>Registration</h1>
+                </div> <!-- end of col -->
+            </div> <!-- end of row -->
+        </div> <!-- end of container -->
+    </header> <!-- end of ex-header -->
+    <!-- end of header -->
+
+
+    <!-- Basic -->
+    <div class="ex-basic-1 pt-5 pb-5">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-lg-12">
+                    <form id="mainForm">
+                        <h2>Register User</h2>
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="email" placeholder="name@example.com">
+                            <label for="floatingInput">Email address</label>
+                          </div>
+                          <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="password" placeholder="Password">
+                            <label for="floatingPassword">Password</label>
+                          </div>
+
+                          <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="fname" placeholder="First Name">
+                            <label for="floatingInput">First Name</label>
+                          </div>
+                          <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="lname" placeholder="Last Name">
+                            <label for="floatingPassword">Last Name</label>
+                          </div>
+                          <br>
+                          <button type="submit" class="btn btn-primary">Create New</button>
+                          <a href="index.html"> <button type="button" class="btn btn-primary">Login</button></a>
+                          
+                    </form>
+
+                </div> <!-- end of col -->
+            </div> <!-- end of row -->
+        </div> <!-- end of container -->
+    </div> <!-- end of ex-basic-1 -->
+    <!-- end of basic -->
+
+
+
+
+
+
+   
+
+
+
+    <!-- Scripts -->
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore,doc,setDoc,getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getAuth,createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyAROGcERQeaA1-7RfBv7L50mhTGnTRGUBk",
+    authDomain: "quizapp-8c8cb.firebaseapp.com",
+    projectId: "quizapp-8c8cb",
+    storageBucket: "quizapp-8c8cb.appspot.com",
+    messagingSenderId: "495643197669",
+    appId: "1:495643197669:web:3a10f4dd374da3fd35d40c"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db= getFirestore();
+  const auth=getAuth(app);
+
+  let email=document.getElementById('email');
+  let password=document.getElementById('password');
+  let fname=document.getElementById('fname');
+  let lname=document.getElementById('lname');
+  let mainForm=document.getElementById('mainForm');
+
+
+
+
+
+  let RegisterUser= evt=>{
+    evt.preventDefault();
+
+    createUserWithEmailAndPassword(auth,email.value,password.value)
+    .then(async(credentials)=>{
+        var ref =doc(db,"UserAuthList",credentials.user.uid);
+        await setDoc(ref,{
+            firstname: fname.value,
+            lastname: lname.value
+        });
+        const docSnap=await getDoc(ref);
+        
+        if(docSnap.exists()){
+            sessionStorage.setItem("user-info",JSON.stringify({
+                firstname:docSnap.data().firstname,
+                lastname:docSnap.data().lastname
+            }))
+            sessionStorage.setItem("user-creds",JSON.stringify(credentials.user));
+            window.location.href="quiz.html";
+
+        }
+        
+
+
+     
+    })
+
+    .catch((error)=>{
+        alert(error.message);
+        console.log(error.code);
+        console.log(error.message);
+    })
+  }
+  mainForm.addEventListener('submit',RegisterUser);
+
+
+</script>
+    <script src="./js/bootstrap.min.js"></script><!-- Bootstrap framework -->
+    <script src="./js/purecounter.min.js"></script> <!-- Purecounter counter for statistics numbers -->
+    <script src="./js/swiper.min.js"></script><!-- Swiper for image and text sliders -->
+    <script src="./js/aos.js"></script><!-- AOS on Animation Scroll -->
+    <script src="./js/script.js"></script>  <!-- Custom scripts -->
+    <!-- <script src="./js/quiz.js"></script>  Custom scripts -->
+</body>
+</html>
